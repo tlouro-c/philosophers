@@ -1,0 +1,44 @@
+# Sample Makefile
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR)
+NAME = philo
+
+INCLUDE_DIR = ./include
+SRC_DIR = ./src
+OBJ_DIR = ./obj
+
+SRC_FILES =  $(SRC_DIR)/main.c \
+			 $(SRC_DIR)/routine.c \
+			 $(SRC_DIR)/table.c \
+			 $(SRC_DIR)/utils/philo_msg.c \
+			 $(SRC_DIR)/utils/error_msg.c \
+			 $(SRC_DIR)/utils/utils.c
+
+OBJ_FILES = $(patsubst $(SRC_DIR)/*/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+
+all: $(NAME)
+
+$(NAME): $(OBJ_FILES)
+	$(CC) $^ -o $@ -I./include -lpthread
+
+# Make sure dir exists
+$(OBJ_FILES): | $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+# Create object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	@rm -f $(OBJS)
+	@if [ -d "$(OBJ_DIR)" ]; then 		rm -rf $(OBJ_DIR); 	fi
+
+fclean: clean
+	@rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re
+
