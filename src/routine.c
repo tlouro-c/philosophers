@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 22:02:15 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 11:12:15 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:08:45 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ static int	even_forks(t_philo *philo)
 	}
 	else
 	{
+		usleep(2 * 1000);
 		pthread_mutex_lock(philo->right_fork);
 		print_taken_fork(philo->nr, philo->info->start_time);
 		if (starvation_check(philo) == -1)
 			return (-1);
 		pthread_mutex_lock(philo->left_fork);
-	}		
+	}
 	print_taken_fork(philo->nr, philo->info->start_time);
 	if (starvation_check(philo) == -1)
 		return (-1);
@@ -44,10 +45,12 @@ static int	odd_forks(t_philo *philo)
 		print_taken_fork(philo->nr, philo->info->start_time);
 		if (starvation_check(philo) == -1)
 			return (-1);
+		usleep(2 * 1000);
 		pthread_mutex_lock(philo->left_fork);
 	}
 	else
 	{
+		usleep(2 * 1000);
 		if (philo->left_fork)
 			pthread_mutex_lock(philo->left_fork);
 		if (starvation_check(philo) == -1)

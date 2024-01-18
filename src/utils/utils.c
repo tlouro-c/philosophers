@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:52:21 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 10:18:30 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:06:47 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	starvation_check(t_philo *philo)
 {
 	pthread_mutex_lock(philo->info->is_dead_mutex);
 	if (((get_time() - philo->last_meal_time) > philo->info->time_to_die)
-	|| (!philo->left_fork) && !philo->info->is_dead)
+		|| (!philo->left_fork) && !philo->info->is_dead)
 	{
 		philo->info->is_dead = 1;
 		usleep(100);
