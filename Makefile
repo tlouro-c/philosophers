@@ -1,6 +1,6 @@
 # Sample Makefile
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR)
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g -I$(INCLUDE_DIR)
 NAME = philo
 
 INCLUDE_DIR = ./include
@@ -8,10 +8,9 @@ SRC_DIR = ./src
 OBJ_DIR = ./obj
 
 SRC_FILES =  $(SRC_DIR)/main.c \
-			 $(SRC_DIR)/routine.c \
-			 $(SRC_DIR)/table.c \
-			 $(SRC_DIR)/utils/philo_msg.c \
-			 $(SRC_DIR)/utils/error_msg.c \
+			 $(SRC_DIR)/routines.c \
+			 $(SRC_DIR)/generators.c \
+			 $(SRC_DIR)/utils/messages.c \
 			 $(SRC_DIR)/utils/utils.c
 
 OBJ_FILES = $(patsubst $(SRC_DIR)/*/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))

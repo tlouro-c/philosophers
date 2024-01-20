@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 11:10:11 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 01:38:27 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,60 +22,70 @@
 # include <limits.h>
 # include <unistd.h>
 
+# define FORK "has taken a fork"
+# define EAT "is eating"
+# define THINK "is thinking"
+# define SLEEP "is sleeping"
+# define DIED "died"
+
 typedef struct timeval	t_time;
+typedef pthread_mutex_t	t_mutex;
 
 typedef struct s_info
 {
-	long			start_time;
-	long			nr_philo;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
-	long			number_of_times_each_philosopher_must_eat;
-	int				is_dead;
-	pthread_mutex_t	*is_dead_mutex;
+	long	start;
+	long	nr_philo;
+	long	life_time;
+	long	eat_time;
+	long	sleep_time;
+	long	nr_meals;
+	int		death;
+	t_mutex	*status_mutex;
 }	t_info;
 
 typedef struct s_philo
 {
 	pthread_t		thread;
-	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*left_fork;
+	t_mutex			*right_fork;
+	t_mutex			*left_fork;
 	t_info			*info;
 	long			nr;
-	long			last_meal_time;
+	long			last_meal;
 	long			meals_counter;
+	int				full;
 	struct s_philo	*next;
 }	t_philo;
 
-/* -------------------------------------------------------------------------- */
-/*                                  philo_msg                                 */
-/* -------------------------------------------------------------------------- */
-
-void	print_taken_fork(int philo_nr, long start_ms);
-void	print_is_eating(int philo_nr, long start_ms);
-void	print_is_sleeping(int philo_nr, long start_ms);
-void	print_is_thinking(int philo_nr, long start_ms);
-void	print_died(int philo_nr, long start_ms);
+typedef struct s_garcon
+{
+	pthread_t	thread;
+	t_philo		*table;
+	t_info		*info;
+}	t_garcon;
 
 /* -------------------------------------------------------------------------- */
-/*                                  error_msg                                 */
+/*                                  messages                                  */
 /* -------------------------------------------------------------------------- */
 
-void	not_enough_arguments(void);
-void	error_exiting(int error_code);
-void	free_table_exit(t_philo *philo);
+void		print_death(t_philo *philo);
+void		print(t_philo *philo, char *msg);
+void		not_enough_arguments(void);
+void		error_exiting(t_philo *table, int error_code);
+void		free_table(t_philo *table);
 
 /* -------------------------------------------------------------------------- */
 /*                                    utils                                   */
 /* -------------------------------------------------------------------------- */
 
-void	*ft_calloc(int quantity, int size);
-long	ft_atol(const char *s);
-long	get_time(void);
-void	generate_table(int nr_philo, t_info *info);
-int		starvation_check(t_philo *philo);
+void		*ft_calloc(int quantity, int size);
+long		ft_atol(const char *s);
+long		get_time(void);
+t_philo		*generate_table(t_info *info);
+t_garcon	*generate_garcon(t_info *info);
+void		launch_threads(t_garcon *garcon);
+int			alive(t_philo *philo);
 
-void	*routine(t_philo *philo);
+void		*routine(t_philo *philo);
+void		*garcon_routine(t_garcon *garcon);
 
 #endif /* PHILO_H */

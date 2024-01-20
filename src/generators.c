@@ -1,16 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   table.c                                            :+:      :+:    :+:   */
+/*   generators.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/17 22:51:47 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 11:06:04 by tlouro-c         ###   ########.fr       */
+/*   Created: 2024/01/19 17:18:06 by tlouro-c          #+#    #+#             */
+/*   Updated: 2024/01/20 01:38:51 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+t_garcon	*generate_garcon(t_info *info)
+{
+	t_garcon	*garcon;
+
+	garcon = ft_calloc(1, sizeof(t_garcon));
+	if (!garcon)
+		exit (254);
+	garcon->info = info;
+	garcon->table = generate_table(info);
+	return (garcon);
+}
 
 static void	assign_node(t_philo **philo, t_philo *new)
 {
@@ -41,7 +53,7 @@ static t_philo	*add_to_table(t_philo **philo, t_info *info, int i)
 	if (!new)
 		return (NULL);
 	new->nr = i + 1;
-	new->last_meal_time = info->start_time;
+	new->last_meal = info->start;
 	new->info = info;
 	new->right_fork = ft_calloc(1, sizeof(pthread_mutex_t));
 	pthread_mutex_init(new->right_fork, NULL);
@@ -49,30 +61,40 @@ static t_philo	*add_to_table(t_philo **philo, t_info *info, int i)
 	return (new);
 }
 
-void	generate_table(int nr_philo, t_info *info)
+t_philo	*generate_table(t_info *info)
 {
-	t_philo	*philo;
-	t_philo	*tmp;
+	t_philo	*table;
 	int		i;
 
-	philo = NULL;
-	if (nr_philo == 0)
+	table = NULL;
+	if (info->nr_philo == 0)
 		exit (0);
+	pthread_mutex_init(info->status_mutex, NULL);
 	i = 0;
-	while (i < nr_philo)
-		if (!add_to_table(&philo, info, i++))
-			free_table_exit(philo);
-	pthread_mutex_init(info->is_dead_mutex, NULL);
-	tmp = philo;
+	while (i < info->nr_philo)
+		if (!add_to_table(&table, info, i++))
+			error_exiting(table, 254);
+	return (table);
+}
+
+void	launch_threads(t_garcon *garcon)
+{
+	t_philo	*tmp;
+
+	if (pthread_create(&garcon->thread, NULL, (void *)garcon_routine,
+			(void *)garcon) != 0)
+		error_exiting(garcon->table, 254);
+	tmp = garcon->table;
 	if (pthread_create(&tmp->thread, NULL, (void *)routine, (void *)tmp) != 0)
-		free_table_exit(philo);
+		error_exiting(garcon->table, 254);
+	pthread_detach(tmp->thread);
 	tmp = tmp -> next;
-	while (tmp != philo)
+	while (tmp != garcon->table)
 	{
 		if (pthread_create(&tmp->thread, NULL, (void *)routine,
 				(void *)tmp) != 0)
-			free_table_exit(philo);
+			error_exiting(garcon->table, 254);
+		pthread_detach(tmp->thread);
 		tmp = tmp->next;
 	}
-	pthread_exit(0);
 }

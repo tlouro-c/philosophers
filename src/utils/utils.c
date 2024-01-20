@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:52:21 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 16:06:47 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 01:33:03 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,18 +53,34 @@ long	get_time(void)
 	return (now.tv_sec * 1000 + now.tv_usec / 1000);
 }
 
-int	starvation_check(t_philo *philo)
+void	free_table(t_philo *table)
 {
-	pthread_mutex_lock(philo->info->is_dead_mutex);
-	if (((get_time() - philo->last_meal_time) > philo->info->time_to_die)
-		|| (!philo->left_fork) && !philo->info->is_dead)
+	t_philo	*tmp;
+	t_philo	*next;
+
+	tmp = table -> next;
+	pthread_mutex_destroy(tmp->info->status_mutex);
+	while (tmp != table)
 	{
-		philo->info->is_dead = 1;
-		usleep(100);
-		print_died(philo->nr, philo->info->start_time);
-		pthread_mutex_unlock(philo->info->is_dead_mutex);
-		return (-1);
+		next = tmp->next;
+		pthread_mutex_destroy(tmp->right_fork);
+		free(tmp->right_fork);
+		free(tmp);
+		tmp = next;
 	}
-	pthread_mutex_unlock(philo->info->is_dead_mutex);
-	return (0);
+	pthread_mutex_destroy(table->right_fork);
+	free(table->right_fork);
+	free(table);
+}
+
+int	alive(t_philo *philo)
+{
+	pthread_mutex_lock(philo->info->status_mutex);
+	if (philo->info->death)
+	{
+		pthread_mutex_unlock(philo->info->status_mutex);
+		return (0);
+	}
+	pthread_mutex_unlock(philo->info->status_mutex);
+	return (1);
 }

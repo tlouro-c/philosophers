@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routine.c                                          :+:      :+:    :+:   */
+/*   routines.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 22:02:15 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:45 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 01:38:44 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static int	even_forks(t_philo *philo)
 	if (philo->nr % 2 == 1)
 	{
 		pthread_mutex_lock(philo->left_fork);
-		print_taken_fork(philo->nr, philo->info->start_time);
-		if (starvation_check(philo) == -1)
+		print(philo, FORK);
+		if (!alive(philo))
 			return (-1);
 		pthread_mutex_lock(philo->right_fork);
 	}
@@ -26,13 +26,13 @@ static int	even_forks(t_philo *philo)
 	{
 		usleep(2 * 1000);
 		pthread_mutex_lock(philo->right_fork);
-		print_taken_fork(philo->nr, philo->info->start_time);
-		if (starvation_check(philo) == -1)
+		print(philo, FORK);
+		if (!alive(philo))
 			return (-1);
 		pthread_mutex_lock(philo->left_fork);
 	}
-	print_taken_fork(philo->nr, philo->info->start_time);
-	if (starvation_check(philo) == -1)
+	print(philo, FORK);
+	if (!alive(philo))
 		return (-1);
 	return (0);
 }
@@ -42,10 +42,12 @@ static int	odd_forks(t_philo *philo)
 	if (philo->nr % 2 == 1)
 	{
 		pthread_mutex_lock(philo->right_fork);
-		print_taken_fork(philo->nr, philo->info->start_time);
-		if (starvation_check(philo) == -1)
+		print(philo, FORK);
+		if (!alive(philo))
 			return (-1);
 		usleep(2 * 1000);
+		if (!philo->left_fork)
+			return (-1);
 		pthread_mutex_lock(philo->left_fork);
 	}
 	else
@@ -53,13 +55,13 @@ static int	odd_forks(t_philo *philo)
 		usleep(2 * 1000);
 		if (philo->left_fork)
 			pthread_mutex_lock(philo->left_fork);
-		if (starvation_check(philo) == -1)
+		if (!alive(philo))
 			return (-1);
-		print_taken_fork(philo->nr, philo->info->start_time);
+		print(philo, FORK);
 		pthread_mutex_lock(philo->right_fork);
 	}
-	print_taken_fork(philo->nr, philo->info->start_time);
-	if (starvation_check(philo) == -1)
+	print(philo, FORK);
+	if (!alive(philo))
 		return (-1);
 	return (0);
 }
@@ -77,40 +79,54 @@ static int	setup_forks(t_philo *philo)
 	return (0);
 }
 
-static int	thread_exit(t_philo *philo)
-{
-	pthread_mutex_destroy(philo->right_fork);
-	if (philo->left_fork)
-		pthread_mutex_destroy(philo->left_fork);
-	pthread_mutex_destroy(philo->info->is_dead_mutex);
-	if (philo->meals_counter
-		== philo->info->number_of_times_each_philosopher_must_eat)
-		return (1);
-	return (0);
-}
-
 void	*routine(t_philo *philo)
 {
 	while (1)
 	{
+		print(philo, THINK);
 		if (setup_forks(philo) == -1)
 			break ;
-		philo->last_meal_time = get_time();
-		print_is_eating(philo->nr, philo->info->start_time);
-		usleep(philo->info->time_to_eat * 1000);
+		philo->last_meal = get_time();
+		print(philo, EAT);
+		usleep(philo->info->eat_time * 1000);
+		philo->meals_counter++;
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
-		philo->meals_counter++;
-		if (philo->meals_counter
-			== philo->info->number_of_times_each_philosopher_must_eat)
+		if (philo->meals_counter == philo->info->nr_meals)
 			break ;
-		print_is_sleeping(philo->nr, philo->info->start_time);
-		usleep(philo->info->time_to_sleep * 1000);
-		if (starvation_check(philo) == -1)
-			 break ;
-		print_is_thinking(philo->nr, philo->info->start_time);
+		print(philo, SLEEP);
+		usleep(philo->info->sleep_time * 1000);
+		if (!alive(philo))
+			break ;
 	}
-	if (thread_exit(philo) == 0)
-		exit (0);
+	return (0);
+}
+
+void	*garcon_routine(t_garcon *garcon)
+{
+	t_philo			*current_philo;
+	static int		full;
+
+	current_philo = garcon->table;
+	while (1)
+	{
+		if ((get_time() - current_philo->last_meal) > garcon->info->life_time)
+		{
+			pthread_mutex_lock(garcon->info->status_mutex);
+			garcon->info->death = 1;
+			print_death(current_philo);
+			pthread_mutex_unlock(garcon->info->status_mutex);
+			break ;
+		}
+		if (current_philo->meals_counter == garcon->info->nr_meals
+			&& current_philo->full == 0)
+		{
+			current_philo->full = 1;
+			full++;
+			if (full == garcon->info->nr_philo)
+				break ;
+		}
+		current_philo = current_philo->next;
+	}
 	return (0);
 }

@@ -1,16 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_msg.c                                        :+:      :+:    :+:   */
+/*   messages.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/17 14:47:47 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/18 09:52:50 by tlouro-c         ###   ########.fr       */
+/*   Created: 2024/01/17 10:39:36 by tlouro-c          #+#    #+#             */
+/*   Updated: 2024/01/20 01:32:55 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	print(t_philo *philo, char *msg)
+{
+	pthread_mutex_lock(philo->info->status_mutex);
+	if (!philo->info->death)
+		printf("%-5li %3li %s\n", (get_time() - philo->info->start), philo->nr,
+			msg);
+	pthread_mutex_unlock(philo->info->status_mutex);
+}
+
+void	print_death(t_philo *philo)
+{
+	printf("%-5li %3li died\n", (get_time() - philo->info->start), philo->nr);
+}
 
 void	not_enough_arguments(void)
 {
@@ -19,26 +33,9 @@ void	not_enough_arguments(void)
 	exit(255);
 }
 
-void	error_exiting(int error_code)
+void	error_exiting(t_philo *table, int error_code)
 {
+	free_table(table);
 	write(2, "Error, exiting...\n", 19);
 	exit(error_code);
-}
-
-void	free_table_exit(t_philo *philo)
-{
-	t_philo	*tmp;
-	t_philo	*next;
-
-	tmp = philo;
-	pthread_mutex_destroy(tmp->info->is_dead_mutex);
-	while (tmp)
-	{
-		next = tmp->next;
-		pthread_mutex_destroy(tmp->right_fork);
-		free(tmp->right_fork);
-		free(tmp);
-		tmp = next;
-	}
-	error_exiting(254);
 }
