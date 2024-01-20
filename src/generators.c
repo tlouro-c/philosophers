@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:18:06 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 01:38:51 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 11:46:43 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,14 +87,12 @@ void	launch_threads(t_garcon *garcon)
 	tmp = garcon->table;
 	if (pthread_create(&tmp->thread, NULL, (void *)routine, (void *)tmp) != 0)
 		error_exiting(garcon->table, 254);
-	pthread_detach(tmp->thread);
 	tmp = tmp -> next;
 	while (tmp != garcon->table)
 	{
 		if (pthread_create(&tmp->thread, NULL, (void *)routine,
 				(void *)tmp) != 0)
 			error_exiting(garcon->table, 254);
-		pthread_detach(tmp->thread);
 		tmp = tmp->next;
 	}
 }

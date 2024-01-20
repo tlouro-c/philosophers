@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 01:38:27 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:15:31 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ typedef struct s_garcon
 	pthread_t	thread;
 	t_philo		*table;
 	t_info		*info;
+	int			client_full;
+	int			anyone_died;
 }	t_garcon;
 
 /* -------------------------------------------------------------------------- */
@@ -87,5 +89,11 @@ int			alive(t_philo *philo);
 
 void		*routine(t_philo *philo);
 void		*garcon_routine(t_garcon *garcon);
+
+void		update_last_meal(t_philo *philo);
+int			update_meal_counter(t_philo *philo);
+void		*wait_for_philosophers(t_garcon *garcon);
+int			unlock_fork_ret(t_mutex *fork);
+int			unlock_both_forks_ret(t_mutex *first_fork, t_mutex *second_fork);
 
 #endif /* PHILO_H */

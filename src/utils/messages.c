@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:39:36 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 01:32:55 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 14:22:59 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 
 void	print(t_philo *philo, char *msg)
 {
-	pthread_mutex_lock(philo->info->status_mutex);
-	if (!philo->info->death)
-		printf("%-5li %3li %s\n", (get_time() - philo->info->start), philo->nr,
-			msg);
-	pthread_mutex_unlock(philo->info->status_mutex);
+	if (!alive(philo))
+		return ;
+	printf("%-5li %3li %s\n", (get_time() - philo->info->start), philo->nr,
+		msg);
 }
 
 void	print_death(t_philo *philo)

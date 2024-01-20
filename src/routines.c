@@ -6,127 +6,112 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 22:02:15 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 01:38:44 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 14:44:07 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	even_forks(t_philo *philo)
+static void	even_forks(t_philo *philo,
+	t_mutex **first_fork, t_mutex **second_fork)
 {
 	if (philo->nr % 2 == 1)
 	{
-		pthread_mutex_lock(philo->left_fork);
-		print(philo, FORK);
-		if (!alive(philo))
-			return (-1);
-		pthread_mutex_lock(philo->right_fork);
+		*first_fork = philo->left_fork;
+		*second_fork = philo->right_fork;
 	}
 	else
 	{
-		usleep(2 * 1000);
-		pthread_mutex_lock(philo->right_fork);
-		print(philo, FORK);
-		if (!alive(philo))
-			return (-1);
-		pthread_mutex_lock(philo->left_fork);
+		*first_fork = philo->right_fork;
+		*second_fork = philo->left_fork;
 	}
-	print(philo, FORK);
-	if (!alive(philo))
-		return (-1);
-	return (0);
 }
 
-static int	odd_forks(t_philo *philo)
+static int	odd_forks(t_philo *philo,
+	t_mutex **first_fork, t_mutex **second_fork)
 {
 	if (philo->nr % 2 == 1)
 	{
-		pthread_mutex_lock(philo->right_fork);
-		print(philo, FORK);
-		if (!alive(philo))
-			return (-1);
-		usleep(2 * 1000);
+		*first_fork = philo->right_fork;
 		if (!philo->left_fork)
 			return (-1);
-		pthread_mutex_lock(philo->left_fork);
+		*second_fork = philo->left_fork;
 	}
 	else
 	{
-		usleep(2 * 1000);
-		if (philo->left_fork)
-			pthread_mutex_lock(philo->left_fork);
-		if (!alive(philo))
-			return (-1);
-		print(philo, FORK);
-		pthread_mutex_lock(philo->right_fork);
+		*first_fork = philo->left_fork;
+		*second_fork = philo->right_fork;
 	}
-	print(philo, FORK);
-	if (!alive(philo))
-		return (-1);
 	return (0);
 }
 
 static int	setup_forks(t_philo *philo)
 {
+	t_mutex	*first_fork;
+	t_mutex	*second_fork;
+
 	if (philo->info->nr_philo % 2 == 0)
-	{
-		if (even_forks(philo) == -1)
-			return (-1);
-	}
+		even_forks(philo, &first_fork, &second_fork);
 	else
-		if (odd_forks(philo) == -1)
+		if (odd_forks(philo, &first_fork, &second_fork) == -1)
 			return (-1);
+	if (philo->info->nr_philo % 2 == 1 && philo->nr % 2 == 0)
+		usleep(3 * 1000);
+	pthread_mutex_lock(first_fork);
+	print(philo, FORK);
+	if (philo->info->nr_philo % 2 == 1 && philo->nr % 2 == 1)
+		usleep(3 * 1000);
+	pthread_mutex_lock(second_fork);
+	print(philo, FORK);
 	return (0);
 }
 
 void	*routine(t_philo *philo)
 {
-	while (1)
+	while (alive(philo))
 	{
 		print(philo, THINK);
 		if (setup_forks(philo) == -1)
 			break ;
-		philo->last_meal = get_time();
 		print(philo, EAT);
+		update_last_meal(philo);
 		usleep(philo->info->eat_time * 1000);
-		philo->meals_counter++;
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
-		if (philo->meals_counter == philo->info->nr_meals)
+		if (philo->info->nr_meals != LONG_MAX
+			&& update_meal_counter(philo) == -1)
 			break ;
 		print(philo, SLEEP);
 		usleep(philo->info->sleep_time * 1000);
-		if (!alive(philo))
-			break ;
 	}
 	return (0);
 }
 
 void	*garcon_routine(t_garcon *garcon)
 {
-	t_philo			*current_philo;
-	static int		full;
+	t_philo		*current_philo;
 
 	current_philo = garcon->table;
 	while (1)
 	{
+		usleep(5 * 1000);
+		pthread_mutex_lock(garcon->info->status_mutex);
 		if ((get_time() - current_philo->last_meal) > garcon->info->life_time)
 		{
-			pthread_mutex_lock(garcon->info->status_mutex);
 			garcon->info->death = 1;
-			print_death(current_philo);
-			pthread_mutex_unlock(garcon->info->status_mutex);
-			break ;
+			garcon->anyone_died = 1;
 		}
-		if (current_philo->meals_counter == garcon->info->nr_meals
-			&& current_philo->full == 0)
+		if (current_philo->full)
+			garcon->client_full++;
+		pthread_mutex_unlock(garcon->info->status_mutex);
+		if (garcon->client_full == garcon->info->nr_philo)
+			break ;
+		if (garcon->anyone_died)
 		{
-			current_philo->full = 1;
-			full++;
-			if (full == garcon->info->nr_philo)
-				break ;
+			print_death(current_philo);
+			break ;
 		}
 		current_philo = current_philo->next;
 	}
-	return (0);
+	return (wait_for_philosophers(garcon));
 }

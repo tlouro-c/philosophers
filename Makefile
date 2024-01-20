@@ -1,6 +1,6 @@
 # Sample Makefile
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I$(INCLUDE_DIR)
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR) -I.include -lpthread #-fsanitize=thread -static-libasan -g
 NAME = philo
 
 INCLUDE_DIR = ./include
@@ -11,14 +11,15 @@ SRC_FILES =  $(SRC_DIR)/main.c \
 			 $(SRC_DIR)/routines.c \
 			 $(SRC_DIR)/generators.c \
 			 $(SRC_DIR)/utils/messages.c \
-			 $(SRC_DIR)/utils/utils.c
+			 $(SRC_DIR)/utils/utils.c \
+			 $(SRC_DIR)/utils/routines_utils.c \
 
 OBJ_FILES = $(patsubst $(SRC_DIR)/*/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 all: $(NAME)
 
 $(NAME): $(OBJ_FILES)
-	$(CC) $^ -o $@ -I./include -lpthread
+	$(CC) $(CFLAGS) $^ -o $@
 
 # Make sure dir exists
 $(OBJ_FILES): | $(OBJ_DIR)
