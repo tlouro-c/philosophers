@@ -1,6 +1,6 @@
 # Philosophers - Threads and Mutexes
 
-Clone the repository and build the project:
+### Installation
 
 ```bash
 git clone https://github.com/tlouro-c/philosophers.git
