@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 11:12:50 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 14:26:01 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 15:28:23 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,6 @@ void	*wait_for_philosophers(t_garcon *garcon)
 	}
 	pthread_join(garcon->table->thread, NULL);
 	return (0);
-}
-
-int	unlock_fork_ret(t_mutex *fork)
-{
-	pthread_mutex_unlock(fork);
-	return (-1);
 }
 
 int	unlock_both_forks_ret(t_mutex *first_fork, t_mutex *second_fork)

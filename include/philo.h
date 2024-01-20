@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 13:15:31 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/20 15:30:11 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void		print_death(t_philo *philo);
 void		print(t_philo *philo, char *msg);
 void		not_enough_arguments(void);
 void		error_exiting(t_philo *table, int error_code);
-void		free_table(t_philo *table);
 
 /* -------------------------------------------------------------------------- */
 /*                                    utils                                   */
@@ -82,18 +81,31 @@ void		free_table(t_philo *table);
 void		*ft_calloc(int quantity, int size);
 long		ft_atol(const char *s);
 long		get_time(void);
-t_philo		*generate_table(t_info *info);
-t_garcon	*generate_garcon(t_info *info);
-void		launch_threads(t_garcon *garcon);
 int			alive(t_philo *philo);
+void		free_table(t_philo *table);
+
+/* -------------------------------------------------------------------------- */
+/*                                  routines                                  */
+/* -------------------------------------------------------------------------- */
 
 void		*routine(t_philo *philo);
 void		*garcon_routine(t_garcon *garcon);
 
-void		update_last_meal(t_philo *philo);
-int			update_meal_counter(t_philo *philo);
-void		*wait_for_philosophers(t_garcon *garcon);
-int			unlock_fork_ret(t_mutex *fork);
+/* -------------------------------- */
+/*          routines_utils          */
+/* -------------------------------- */
+
 int			unlock_both_forks_ret(t_mutex *first_fork, t_mutex *second_fork);
+int			update_meal_counter(t_philo *philo);
+void		update_last_meal(t_philo *philo);
+void		*wait_for_philosophers(t_garcon *garcon);
+
+/* -------------------------------------------------------------------------- */
+/*                                 generators                                 */
+/* -------------------------------------------------------------------------- */
+
+t_philo		*generate_table(t_info *info);
+t_garcon	*generate_garcon(t_info *info);
+void		launch_threads(t_garcon *garcon);
 
 #endif /* PHILO_H */
