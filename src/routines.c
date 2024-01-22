@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 22:02:15 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 15:31:59 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/22 21:37:20 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ void	*garcon_routine(t_garcon *garcon)
 	current_philo = garcon->table;
 	while (1)
 	{
-		usleep(5 * 1000);
 		pthread_mutex_lock(garcon->info->status_mutex);
 		if ((get_time() - current_philo->last_meal) > garcon->info->life_time)
 		{
