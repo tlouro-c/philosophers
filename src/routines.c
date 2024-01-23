@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 22:02:15 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 00:10:30 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 22:39:15 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ static int	setup_forks(t_philo *philo, int *death)
 		if (odd_forks(philo, &first_fork, &second_fork) == -1)
 			return (-1);
 	if (philo->info->nr_philo % 2 == 1 && philo->nr % 2 == 0)
-		usleep(4 * 1000);
+		usleep(3000);
 	pthread_mutex_lock(first_fork);
 	print(philo, FORK, death);
 	if (philo->info->nr_philo % 2 == 1 && philo->nr % 2 == 1)
-		usleep(4 * 1000);
+		usleep(3000);
 	pthread_mutex_lock(second_fork);
 	print(philo, FORK, death);
 	return (0);
@@ -86,8 +86,8 @@ void	*routine(t_philo *philo)
 		update_last_meal(philo);
 		usleep(philo->info->eat_time * 1000);
 		unlock_both_forks_ret(philo->left_fork, philo->right_fork);
-		if (!death && philo->info->nr_meals != LONG_MAX
-			&& update_meal_counter(philo) == -1)
+		if (death || (philo->info->nr_meals != LONG_MAX
+				&& update_meal_counter(philo) == -1))
 			break ;
 		print(philo, SLEEP, &death);
 		usleep(philo->info->sleep_time * 1000);
@@ -99,7 +99,6 @@ void	*garcon_routine(t_garcon *garcon)
 {
 	t_philo		*current_philo;
 
-	usleep(50 * 1000);
 	current_philo = garcon->table;
 	while (1)
 	{
@@ -118,7 +117,7 @@ void	*garcon_routine(t_garcon *garcon)
 		}
 		current_philo = current_philo->next;
 		if (current_philo == garcon->table)
-			usleep(500);
+			usleep(1000);
 	}
 	return (wait_for_philosophers(garcon));
 }

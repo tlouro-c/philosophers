@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:24 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 11:10:05 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 22:11:52 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	main(int argc, char *argv[])
 	if (argc < 5)
 		not_enough_arguments();
 	info = ft_calloc(1, sizeof(t_info));
-	info->start = get_time();
 	info->nr_philo = ft_atol(argv[1]);
 	info->life_time = ft_atol(argv[2]);
 	info->eat_time = ft_atol(argv[3]);
@@ -33,7 +32,6 @@ int	main(int argc, char *argv[])
 		info->nr_meals = LONG_MAX;
 	garcon = generate_garcon(info);
 	launch_threads(garcon);
-	pthread_join(garcon->thread, NULL);
 	free_table(garcon->table);
 	free(garcon);
 	free(info);

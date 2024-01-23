@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:18:06 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 18:02:13 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 22:14:59 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ static t_philo	*add_to_table(t_philo **philo, t_info *info, int i)
 	if (!new)
 		return (NULL);
 	new->nr = i + 1;
-	new->last_meal = info->start;
 	new->info = info;
 	new->right_fork = ft_calloc(1, sizeof(pthread_mutex_t));
 	pthread_mutex_init(new->right_fork, NULL);
@@ -91,18 +90,19 @@ void	launch_threads(t_garcon *garcon)
 {
 	t_philo	*tmp;
 
-	if (pthread_create(&garcon->thread, NULL, (void *)garcon_routine,
-			(void *)garcon) != 0)
-		error_exiting(garcon->table);
+	garcon->info->start = get_time();
 	tmp = garcon->table;
+	tmp->last_meal = garcon->info->start;
 	if (pthread_create(&tmp->thread, NULL, (void *)routine, (void *)tmp) != 0)
 		error_exiting(garcon->table);
 	tmp = tmp -> next;
 	while (tmp != garcon->table)
 	{
+		tmp->last_meal = garcon->info->start;
 		if (pthread_create(&tmp->thread, NULL, (void *)routine,
 				(void *)tmp) != 0)
 			error_exiting(garcon->table);
 		tmp = tmp->next;
 	}
+	garcon_routine(garcon);
 }
