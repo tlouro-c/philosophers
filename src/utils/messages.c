@@ -6,18 +6,24 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:39:36 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 14:22:59 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 00:15:06 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	print(t_philo *philo, char *msg)
+void	print(t_philo *philo, char *msg, int *death)
 {
-	if (!alive(philo))
-		return ;
-	printf("%-5li %3li %s\n", (get_time() - philo->info->start), philo->nr,
-		msg);
+	pthread_mutex_lock(philo->info->status_mutex);
+	if (philo->info->death)
+		*death = 1;
+	else
+	{
+		printf("%-5li %3li %s\n", (get_time() - philo->info->start),
+			philo->nr, msg);
+		*death = 0;
+	}
+	pthread_mutex_unlock(philo->info->status_mutex);
 }
 
 void	print_death(t_philo *philo)

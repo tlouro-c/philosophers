@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 15:30:11 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:55:15 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef struct s_garcon
 /* -------------------------------------------------------------------------- */
 
 void		print_death(t_philo *philo);
-void		print(t_philo *philo, char *msg);
+void		print(t_philo *philo, char *msg, int *death);
 void		not_enough_arguments(void);
 void		error_exiting(t_philo *table, int error_code);
 
@@ -99,6 +99,7 @@ int			unlock_both_forks_ret(t_mutex *first_fork, t_mutex *second_fork);
 int			update_meal_counter(t_philo *philo);
 void		update_last_meal(t_philo *philo);
 void		*wait_for_philosophers(t_garcon *garcon);
+void		assign_death_info(t_garcon *garcon);
 
 /* -------------------------------------------------------------------------- */
 /*                                 generators                                 */

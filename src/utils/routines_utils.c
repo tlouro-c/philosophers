@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 11:12:50 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 15:28:23 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:29:28 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	update_last_meal(t_philo *philo)
 
 	now = get_time();
 	pthread_mutex_lock(philo->info->status_mutex);
-	philo->last_meal = now;
+	if (!philo->info->death)
+		philo->last_meal = now;
 	pthread_mutex_unlock(philo->info->status_mutex);
 }
 
@@ -56,4 +57,10 @@ int	unlock_both_forks_ret(t_mutex *first_fork, t_mutex *second_fork)
 	pthread_mutex_unlock(first_fork);
 	pthread_mutex_unlock(second_fork);
 	return (-1);
+}
+
+void	assign_death_info(t_garcon *garcon)
+{
+	garcon->anyone_died = 1;
+	garcon->info->death = 1;
 }
