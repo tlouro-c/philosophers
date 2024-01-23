@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:18:06 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/20 11:46:43 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:02:13 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,14 @@ t_garcon	*generate_garcon(t_info *info)
 
 	garcon = ft_calloc(1, sizeof(t_garcon));
 	if (!garcon)
-		exit (254);
+		return (NULL);
 	garcon->info = info;
 	garcon->table = generate_table(info);
+	if (!garcon->table)
+	{
+		free(garcon);
+		return (NULL);
+	}
 	return (garcon);
 }
 
@@ -72,8 +77,13 @@ t_philo	*generate_table(t_info *info)
 	pthread_mutex_init(info->status_mutex, NULL);
 	i = 0;
 	while (i < info->nr_philo)
+	{
 		if (!add_to_table(&table, info, i++))
-			error_exiting(table, 254);
+		{
+			error_exiting(table);
+			return (NULL);
+		}
+	}
 	return (table);
 }
 
@@ -83,16 +93,16 @@ void	launch_threads(t_garcon *garcon)
 
 	if (pthread_create(&garcon->thread, NULL, (void *)garcon_routine,
 			(void *)garcon) != 0)
-		error_exiting(garcon->table, 254);
+		error_exiting(garcon->table);
 	tmp = garcon->table;
 	if (pthread_create(&tmp->thread, NULL, (void *)routine, (void *)tmp) != 0)
-		error_exiting(garcon->table, 254);
+		error_exiting(garcon->table);
 	tmp = tmp -> next;
 	while (tmp != garcon->table)
 	{
 		if (pthread_create(&tmp->thread, NULL, (void *)routine,
 				(void *)tmp) != 0)
-			error_exiting(garcon->table, 254);
+			error_exiting(garcon->table);
 		tmp = tmp->next;
 	}
 }

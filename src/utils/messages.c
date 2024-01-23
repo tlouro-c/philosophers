@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:39:36 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 00:15:06 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:01:18 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ void	not_enough_arguments(void)
 {
 	write(2, "Usage: ./philo number_of_philosophers time_to_die time_to_eat "
 		"time_to_sleep [number_of_times_each_philosopher_must_eat]\n", 121);
-	exit(255);
+	return ;
 }
 
-void	error_exiting(t_philo *table, int error_code)
+void	error_exiting(t_philo *table)
 {
 	free_table(table);
 	write(2, "Error, exiting...\n", 19);
-	exit(error_code);
+	return ;
 }

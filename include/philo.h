@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/22 23:55:15 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:01:27 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ typedef struct s_garcon
 void		print_death(t_philo *philo);
 void		print(t_philo *philo, char *msg, int *death);
 void		not_enough_arguments(void);
-void		error_exiting(t_philo *table, int error_code);
+void		error_exiting(t_philo *table);
 
 /* -------------------------------------------------------------------------- */
 /*                                    utils                                   */
