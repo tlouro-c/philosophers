@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 18:01:27 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/25 18:49:26 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ typedef struct s_philo
 
 typedef struct s_garcon
 {
-	pthread_t	thread;
 	t_philo		*table;
 	t_info		*info;
 	int			client_full;
