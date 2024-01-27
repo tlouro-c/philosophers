@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:24 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 22:11:52 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/27 10:25:01 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char *argv[])
 	t_mutex		status_mutex;
 
 	if (argc < 5)
-		not_enough_arguments();
+		return (not_enough_arguments(), 1);
 	info = ft_calloc(1, sizeof(t_info));
 	info->nr_philo = ft_atol(argv[1]);
 	info->life_time = ft_atol(argv[2]);
