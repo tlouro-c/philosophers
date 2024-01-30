@@ -1,6 +1,6 @@
 # Sample Makefile
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR) -I.include -lpthread #-fsanitize=thread -static-libasan -g
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR) -I.include -lpthread -g #-fsanitize=thread -static-libasan -g
 NAME = philo
 
 INCLUDE_DIR = ./include

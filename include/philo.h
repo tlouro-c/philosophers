@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:37:40 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/25 18:49:26 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:46:08 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ long		ft_atol(const char *s);
 long		get_time(void);
 int			alive(t_philo *philo);
 void		free_table(t_philo *table);
+void		clean_exit(t_garcon *garcon);
 
 /* -------------------------------------------------------------------------- */
 /*                                  routines                                  */

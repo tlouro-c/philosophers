@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:18:06 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 22:14:59 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:41:41 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,15 @@ t_garcon	*generate_garcon(t_info *info)
 
 	garcon = ft_calloc(1, sizeof(t_garcon));
 	if (!garcon)
+	{
+		free(info);
 		return (NULL);
+	}
 	garcon->info = info;
 	garcon->table = generate_table(info);
 	if (!garcon->table)
 	{
+		free(info);
 		free(garcon);
 		return (NULL);
 	}
@@ -72,7 +76,7 @@ t_philo	*generate_table(t_info *info)
 
 	table = NULL;
 	if (info->nr_philo == 0)
-		exit (0);
+		return (NULL);
 	pthread_mutex_init(info->status_mutex, NULL);
 	i = 0;
 	while (i < info->nr_philo)

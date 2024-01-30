@@ -6,7 +6,7 @@
 /*   By: tlouro-c <tlouro-c@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 10:39:36 by tlouro-c          #+#    #+#             */
-/*   Updated: 2024/01/23 22:29:38 by tlouro-c         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:45:52 by tlouro-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,13 @@ void	error_exiting(t_philo *table)
 {
 	free_table(table);
 	write(2, "Error, exiting...\n", 19);
+	return ;
+}
+
+void	clean_exit(t_garcon *garcon)
+{
+	free_table(garcon->table);
+	free(garcon->info);
+	free(garcon);
 	return ;
 }
